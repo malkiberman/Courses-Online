@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../services/auth.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -23,8 +23,7 @@ import { RouterModule } from '@angular/router';
 export class LoginComponent {
   loginForm!: FormGroup;
   errorMessage: string = '';
-
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { // הוספת Router
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -53,20 +52,22 @@ export class LoginComponent {
     return '';
   }
 
+  
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Login Data:', this.loginForm.value);
-      this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe(
+      this.authService.login(this.loginForm.value).subscribe( // שימוש ב-loginForm.value
         (response: any) => {
           console.log('Login successful', response);
           localStorage.setItem('token', response.token);
+          localStorage.setItem('role', response.role); // שמירת ה-role
+          this.router.navigate(['/home']); // הפניה לדף הבית
         },
         (error: any) => {
           console.error('Login failed', error);
           this.errorMessage = error.error.message || 'An error occurred. Please try again.';
         }
       );
-    }
-  }
+    }}
 }
 

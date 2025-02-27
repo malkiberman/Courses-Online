@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CoursesService } from '../../services/coursesdata.service'; // ייבוא שירות מתוקן
+import { CoursesService } from '../../services/coursesdata.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-courses',
   standalone: true,
-  imports: [],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.css'
 })
 export class CoursesComponent implements OnInit {
   courses: any[] = [];
+  baseUrl = 'http://localhost:3000/api/courses'; // כתובת ה-API
 
-  constructor(private coursesService:CoursesService ) { } // שימוש בשירות מתוקן
+  constructor(private coursesService: CoursesService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.coursesService.getCourses().subscribe(
@@ -25,24 +26,12 @@ export class CoursesComponent implements OnInit {
   }
 
   joinCourse(courseId: number) {
-    this.coursesService.joinCourse(courseId).subscribe(
-      () => {
-        this.ngOnInit();
-      },
-      (error) => {
-        console.error('Error joining course:', error);
-      }
-    );
+   console.log("join success");
+   
   }
 
   leaveCourse(courseId: number) {
-    this.coursesService.leaveCourse(courseId).subscribe(
-      () => {
-        this.ngOnInit();
-      },
-      (error) => {
-        console.error('Error leaving course:', error);
-      }
-    );
+    console.log("leave success");
+    
   }
 }

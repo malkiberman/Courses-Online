@@ -1,14 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // ייבוא ReactiveFormsModule
-
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CoursesService } from '../../services/coursesdata.service';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-manage-courses',
   standalone: true,
-  imports: [ReactiveFormsModule], // הוספת ReactiveFormsModule
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, MatIconModule],
   templateUrl: './manage-courses.component.html',
-  styleUrl: './manage-courses.component.css'
+  styleUrls: ['./manage-courses.component.css']
 })
 export class ManageCoursesComponent implements OnInit {
   courses: any[] = [];
@@ -16,10 +24,17 @@ export class ManageCoursesComponent implements OnInit {
   lessonForm!: FormGroup;
   selectedCourse: any = null;
   lessons: any[] = [];
+  errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private coursesService: CoursesService) { }
+  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder, private coursesService: CoursesService) { }
 
   ngOnInit(): void {
+    const role = this.authService.getRole();
+    if (role !== 'admin' && role !== 'teacher') {
+      this.router.navigate(['/home']);
+      return;
+    }
+
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
       description: ['']
@@ -48,18 +63,27 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error adding course:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
 
+  editCourse(course: any) {
+    this.showCourseDetails(course.id);
+  }
+
   updateCourse(courseId: number) {
     this.coursesService.updateCourse(courseId, this.courseForm.value).subscribe(
-      () => {
-        this.ngOnInit();
+      (updatedCourse) => {
+        if (this.selectedCourse && this.selectedCourse.id === courseId) {
+          this.selectedCourse = updatedCourse;
+        }
+        this.coursesService.getCourses().subscribe(courses => this.courses = courses);
         this.courseForm.reset();
       },
       (error) => {
         console.error('Error updating course:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
@@ -71,6 +95,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error deleting course:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
@@ -83,6 +108,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching course details:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
 
@@ -92,6 +118,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching lessons:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
@@ -104,6 +131,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error adding lesson:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
@@ -116,6 +144,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error updating lesson:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }
@@ -127,6 +156,7 @@ export class ManageCoursesComponent implements OnInit {
       },
       (error) => {
         console.error('Error deleting lesson:', error);
+        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
   }

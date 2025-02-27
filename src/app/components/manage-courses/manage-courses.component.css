@@ -1,0 +1,39 @@
+.manage-courses-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.forms-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+mat-card {
+  width: 45%;
+  margin-bottom: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-actions,
+.lesson-actions {
+  display: flex;
+  gap: 8px; /* הוספת רווח בין הכפתורים */
+}
+
+.error-message {
+  color: red;
+  margin-top: 20px;
+}
