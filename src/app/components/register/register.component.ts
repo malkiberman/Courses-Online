@@ -4,6 +4,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
@@ -16,7 +18,9 @@ import { RouterModule } from '@angular/router';
     MatFormFieldModule,
     MatButtonModule,
     MatCardModule,
-    RouterModule
+    RouterModule,
+    MatSelectModule,
+    MatOptionModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
@@ -64,11 +68,11 @@ export class RegisterComponent {
         this.registerForm.value.name,
         this.registerForm.value.email,
         this.registerForm.value.password,
-        this.registerForm.value.role // הוספת role
+        this.registerForm.value.role
       ).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
-          this.router.navigate(['/login']); // ניווט להתחברות
+          this.router.navigate(['/login']);
         },
         error: (error) => {
           console.error('Registration failed', error);
@@ -77,4 +81,5 @@ export class RegisterComponent {
       });
     }
   }
+  
 }

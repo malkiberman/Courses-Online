@@ -1,0 +1,29 @@
+<div class="courses-container">
+    <h1>Courses</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (course of courses; track course.id) {
+          <tr>
+            <td>{{ course.title }}</td>
+            <td>{{ course.description }}</td>
+            <td>
+              <button (click)="joinCourse(course.id)">Join</button>
+              <button (click)="leaveCourse(course.id)">Leave</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="3">No courses available.</td>
+          </tr>
+        }
+      </tbody>
+      
+    </table>
+  </div>
