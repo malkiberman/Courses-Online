@@ -1,0 +1,13 @@
+<div class="courses-container">
+  <h1>רשימת קורסים</h1>
+  @for (course of courses; track course.id) {
+    <div class="course-item">
+      <h2>{{ course.title }}</h2>
+      <p>{{ course.description }}</p>
+      <button (click)="joinCourse(course.id)">הצטרף</button>
+      <button (click)="leaveCourse(course.id)">עזוב</button>
+    </div>
+  } @empty {
+    <p>אין קורסים זמינים כרגע.</p>
+  }
+</div>

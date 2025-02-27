@@ -1,0 +1,28 @@
+<div class="my-courses-container">
+    <h1>הקורסים שלי</h1>
+    @for (course of courses; track course.id) {
+      <div class="course-item">
+        <h2>{{ course.title }}</h2>
+        <button (click)="showCourseDetails(course.id)">פרטים</button>
+      </div>
+    } @empty {
+      <p>אין קורסים זמינים כרגע.</p>
+    }
+  
+    @if (selectedCourse) {
+      <div class="course-details">
+        <h2>{{ selectedCourse.title }}</h2>
+        <p>{{ selectedCourse.description }}</p>
+  
+        <h3>שיעורים</h3>
+        @for (lesson of lessons; track lesson.id) {
+          <div class="lesson-item">
+            <h4>{{ lesson.title }}</h4>
+            <p>{{ lesson.content }}</p>
+          </div>
+        } @empty {
+          <p>אין שיעורים בקורס זה.</p>
+        }
+      </div>
+    }
+  </div>
