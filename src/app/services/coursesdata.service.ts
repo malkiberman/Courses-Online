@@ -85,4 +85,12 @@ export class CoursesService {
   leaveCourse(url: string, headers: any): Observable<any> {
     return this.http.delete(url, { headers });
   }
+  joinCourse(courseId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.post(`${this.baseUrl}/${courseId}/enroll`, {}, { headers });
+  }
+
 }

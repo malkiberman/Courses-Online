@@ -1,28 +1,36 @@
 <div class="my-courses-container">
-    <h1>הקורסים שלי</h1>
+  <h1>הקורסים שלי</h1>
+  <mat-accordion>
     @for (course of courses; track course.id) {
-      <div class="course-item">
-        <h2>{{ course.title }}</h2>
-        <button (click)="showCourseDetails(course.id)">פרטים</button>
-      </div>
-    } @empty {
-      <p>אין קורסים זמינים כרגע.</p>
-    }
-  
-    @if (selectedCourse) {
-      <div class="course-details">
-        <h2>{{ selectedCourse.title }}</h2>
+    <mat-expansion-panel (opened)="showCourseDetails(course.id)" (closed)="course.isDetailsOpen = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{ course.title }}
+        </mat-panel-title>
+        <mat-panel-description>
+          לחץ כאן כדי {{ course.isDetailsOpen ? 'לסגור פרטים' : 'לראות פרטים' }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-card-content>
+        @if (selectedCourse && selectedCourse.id === course.id) {
         <p>{{ selectedCourse.description }}</p>
-  
         <h3>שיעורים</h3>
-        @for (lesson of lessons; track lesson.id) {
-          <div class="lesson-item">
+        <mat-list>
+          @for (lesson of lessons; track lesson.id) {
+          <mat-list-item>
             <h4>{{ lesson.title }}</h4>
             <p>{{ lesson.content }}</p>
-          </div>
-        } @empty {
+          </mat-list-item>
+          } @empty {
           <p>אין שיעורים בקורס זה.</p>
+          }
+        </mat-list>
         }
-      </div>
+        <button mat-button (click)="joinCourse(course.id)">הצטרף לקורס</button>
+      </mat-card-content>
+    </mat-expansion-panel>
+    } @empty {
+    <p>אין קורסים זמינים כרגע.</p>
     }
-  </div>
+  </mat-accordion>
+</div>

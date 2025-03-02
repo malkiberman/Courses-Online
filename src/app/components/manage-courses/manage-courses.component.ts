@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CoursesService } from '../../services/coursesdata.service';
@@ -10,11 +10,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule, MatAccordion } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-manage-courses',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, MatIconModule],
+  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, MatIconModule, MatExpansionModule],
   templateUrl: './manage-courses.component.html',
   styleUrls: ['./manage-courses.component.css']
 })
@@ -25,6 +26,8 @@ export class ManageCoursesComponent implements OnInit {
   selectedCourse: any = null;
   lessons: any[] = [];
   errorMessage: string = '';
+
+  @ViewChild(MatAccordion) accordion!: MatAccordion; // הוספת ViewChild
 
   constructor(private authService: AuthService, private router: Router, private fb: FormBuilder, private coursesService: CoursesService) { }
 
@@ -47,7 +50,7 @@ export class ManageCoursesComponent implements OnInit {
 
     this.coursesService.getCourses().subscribe(
       (courses) => {
-        this.courses = courses;
+        this.courses = courses.map(course => ({ ...course, isDetailsOpen: false, isEditFormOpen: false }));
       },
       (error) => {
         console.error('Error fetching courses:', error);
@@ -104,7 +107,6 @@ export class ManageCoursesComponent implements OnInit {
     this.coursesService.getCourseDetails(courseId).subscribe(
       (course) => {
         this.selectedCourse = course;
-        this.courseForm.patchValue(course);
       },
       (error) => {
         console.error('Error fetching course details:', error);
@@ -159,5 +161,25 @@ export class ManageCoursesComponent implements OnInit {
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
     );
+  }
+
+  toggleEditForm(course: any) {
+    course.isEditFormOpen = !course.isEditFormOpen;
+    this.courseForm.patchValue(course);
+  }
+
+  toggleCourseDetails(course: any) {
+    course.isDetailsOpen = !course.isDetailsOpen;
+    if (course.isDetailsOpen) {
+      this.showCourseDetails(course.id);
+    }
+  }
+
+  openAll() {
+    this.accordion.openAll();
+  }
+
+  closeAll() {
+    this.accordion.closeAll();
   }
 }

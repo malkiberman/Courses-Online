@@ -1,0 +1,32 @@
+.my-courses-container {
+  padding: 20px;
+}
+
+.my-courses-container h1 {
+  margin-bottom: 20px;
+}
+
+.course-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.course-item h2 {
+  margin: 0;
+}
+
+.course-details {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.lesson-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}

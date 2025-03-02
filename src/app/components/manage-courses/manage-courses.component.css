@@ -5,6 +5,10 @@
   padding: 20px;
 }
 
+.manage-courses-container h1 {
+  margin-bottom: 20px;
+}
+
 .forms-container {
   display: flex;
   justify-content: space-around;
@@ -12,8 +16,13 @@
   margin-bottom: 20px;
 }
 
+.forms-container mat-card {
+  width: 48%;
+  max-width: 600px;
+}
+
 mat-card {
-  width: 45%;
+  width: 100%;
   margin-bottom: 20px;
 }
 
@@ -25,15 +34,88 @@ mat-list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.course-actions,
-.lesson-actions {
-  display: flex;
-  gap: 8px; /* הוספת רווח בין הכפתורים */
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .error-message {
   color: red;
   margin-top: 20px;
+  text-align: center;
+}
+
+.action-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-right: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-button:hover {
+  background-color: #e0e0e0;
+}
+
+.action-button mat-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.course-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.course-actions {
+  display: flex;
+  gap: 8px;
+}
+
+h3[matListItemTitle] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+  margin: 0;
+}
+
+mat-card-content {
+  padding: 16px;
+}
+
+mat-expansion-panel {
+  margin-bottom: 10px;
+}
+
+mat-expansion-panel-header {
+  background-color: #f0f0f0;
+}
+
+mat-expansion-panel-header:hover {
+  background-color: #e0e0e0;
+}
+
+mat-expansion-panel-header mat-panel-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+mat-expansion-panel-header mat-panel-description {
+  font-size: 0.9em;
+  color: #555;
+}
+
+mat-list {
+  margin-bottom: 10px;
 }

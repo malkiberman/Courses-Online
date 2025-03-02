@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CoursesService } from '../../services/coursesdata.service';
-import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-my-courses',
@@ -22,7 +21,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule
   ],
   templateUrl: './my-courses.component.html',
   styleUrl: './my-courses.component.css'
@@ -37,7 +37,7 @@ export class MyCoursesComponent implements OnInit {
   ngOnInit(): void {
     this.coursesService.getCourses().subscribe(
       (courses) => {
-        this.courses = courses;
+        this.courses = courses.map(course => ({ ...course, isDetailsOpen: false }));
       },
       (error) => {
         console.error('Error fetching my courses:', error);
@@ -63,5 +63,24 @@ export class MyCoursesComponent implements OnInit {
         console.error('Error fetching lessons:', error);
       }
     );
+  }
+
+  joinCourse(courseId: number) {
+    this.coursesService.joinCourse(courseId).subscribe(
+      (response) => {
+        console.log('Joined course successfully:', response);
+        this.ngOnInit();
+      },
+      (error) => {
+        console.error('Error joining course:', error);
+      }
+    );
+  }
+
+  toggleCourseDetails(course: any) {
+    course.isDetailsOpen = !course.isDetailsOpen;
+    if (course.isDetailsOpen) {
+      this.showCourseDetails(course.id);
+    }
   }
 }
