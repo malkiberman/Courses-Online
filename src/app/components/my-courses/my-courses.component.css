@@ -6,27 +6,43 @@
   margin-bottom: 20px;
 }
 
-.course-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+mat-expansion-panel {
   margin-bottom: 10px;
 }
 
-.course-item h2 {
-  margin: 0;
+mat-expansion-panel-header {
+  background-color: #f0f0f0;
 }
 
-.course-details {
-  margin-top: 20px;
-  padding: 10px;
+mat-expansion-panel-header:hover {
+  background-color: #e0e0e0;
+}
+
+mat-expansion-panel-header mat-panel-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+mat-expansion-panel-header mat-panel-description {
+  font-size: 0.9em;
+  color: #555;
+}
+
+mat-card-content {
+  padding: 16px;
+}
+
+mat-card-content h3 {
+  margin-top: 0;
+}
+
+mat-list {
+  margin-bottom: 10px;
+}
+
+mat-list-item {
   border: 1px solid #ddd;
   border-radius: 5px;
-}
-
-.lesson-item {
-  margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
+  margin-bottom: 5px;
 }

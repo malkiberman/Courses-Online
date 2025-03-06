@@ -32,7 +32,7 @@
           <mat-select formControlName="role" required>
             <mat-option value="student">Student</mat-option>
             <mat-option value="teacher">Teacher</mat-option>
-            <mat-option value="admin">Admin</mat-option>
+          
           </mat-select>
           @if (registerForm.controls['role'].invalid && registerForm.controls['role'].touched) {
           <mat-error>Role is required</mat-error>

@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-my-courses',
@@ -22,27 +23,32 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatInputModule,
     MatListModule,
     MatIconModule,
-    MatExpansionModule
+    MatExpansionModule,
   ],
   templateUrl: './my-courses.component.html',
-  styleUrl: './my-courses.component.css'
+  styleUrl: './my-courses.component.css',
 })
 export class MyCoursesComponent implements OnInit {
   courses: any[] = [];
   selectedCourse: any = null;
   lessons: any[] = [];
 
-  constructor(private coursesService: CoursesService) { }
+  constructor(private coursesService: CoursesService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.coursesService.getCourses().subscribe(
-      (courses) => {
-        this.courses = courses.map(course => ({ ...course, isDetailsOpen: false }));
-      },
-      (error) => {
-        console.error('Error fetching my courses:', error);
-      }
-    );
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.coursesService.getStudentCourses(userId).subscribe(
+        (courses) => {
+          this.courses = courses.map((course) => ({ ...course, isDetailsOpen: false }));
+        },
+        (error) => {
+          console.error('Error fetching my courses:', error);
+        }
+      );
+    } else {
+      console.error('User not authenticated.');
+    }
   }
 
   showCourseDetails(courseId: number) {
@@ -65,16 +71,21 @@ export class MyCoursesComponent implements OnInit {
     );
   }
 
-  joinCourse(courseId: number) {
-    this.coursesService.joinCourse(courseId).subscribe(
-      (response) => {
-        console.log('Joined course successfully:', response);
-        this.ngOnInit();
-      },
-      (error) => {
-        console.error('Error joining course:', error);
-      }
-    );
+  leaveCourse(courseId: number) {
+    const userId = this.authService.getUserId();
+    if (userId) {
+      this.coursesService.leaveCourse(courseId, userId).subscribe(
+        (response) => {
+          console.log('Left course successfully:', response);
+          this.ngOnInit();
+        },
+        (error) => {
+          console.error('Error leaving course:', error);
+        }
+      );
+    } else {
+      console.error('User not authenticated.');
+    }
   }
 
   toggleCourseDetails(course: any) {

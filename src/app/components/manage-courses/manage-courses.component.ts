@@ -11,13 +11,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule, MatAccordion } from '@angular/material/expansion';
-
 @Component({
   selector: 'app-manage-courses',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, MatIconModule, MatExpansionModule],
   templateUrl: './manage-courses.component.html',
-  styleUrls: ['./manage-courses.component.css']
+  styleUrls: ['./manage-courses.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
+    MatIconModule,
+    MatExpansionModule
+  ]
 })
 export class ManageCoursesComponent implements OnInit {
   courses: any[] = [];
@@ -26,18 +35,31 @@ export class ManageCoursesComponent implements OnInit {
   selectedCourse: any = null;
   lessons: any[] = [];
   errorMessage: string = '';
+  isAddCourseFormOpen: boolean = false;
 
-  @ViewChild(MatAccordion) accordion!: MatAccordion; // הוספת ViewChild
+  @ViewChild(MatAccordion) accordion!: MatAccordion;
 
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder, private coursesService: CoursesService) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private coursesService: CoursesService
+  ) { }
 
   ngOnInit(): void {
+    this.checkUserRole();
+    this.initForms();
+    this.loadCourses();
+  }
+
+  private checkUserRole(): void {
     const role = this.authService.getRole();
     if (role !== 'admin' && role !== 'teacher') {
       this.router.navigate(['/home']);
-      return;
     }
+  }
 
+  private initForms(): void {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
       description: ['']
@@ -47,139 +69,186 @@ export class ManageCoursesComponent implements OnInit {
       title: ['', Validators.required],
       content: ['']
     });
-
-    this.coursesService.getCourses().subscribe(
-      (courses) => {
-        this.courses = courses.map(course => ({ ...course, isDetailsOpen: false, isEditFormOpen: false }));
-      },
-      (error) => {
-        console.error('Error fetching courses:', error);
-      }
-    );
   }
 
-  addCourse() {
-    this.coursesService.addCourse(this.courseForm.value).subscribe(
-      () => {
+  private loadCourses(): void {
+    this.coursesService.getCourses().subscribe({
+      next: (courses) => {
+        this.courses = courses.map(course => ({
+          ...course,
+          isDetailsOpen: false,
+          isEditFormOpen: false,
+          isLessonsAccordionOpen: false
+        }));
+      },
+      error: (error) => {
+        console.error('Error fetching courses:', error);
+      }
+    });
+  }
+
+  addCourse(): void {
+    this.coursesService.addCourse(this.courseForm.value).subscribe({
+      next: () => {
         this.ngOnInit();
         this.courseForm.reset();
+        this.isAddCourseFormOpen = false;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error adding course:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
-  editCourse(course: any) {
+  editCourse(course: any): void {
     this.showCourseDetails(course.id);
   }
 
-  updateCourse(courseId: number) {
-    this.coursesService.updateCourse(courseId, this.courseForm.value).subscribe(
-      (updatedCourse) => {
+  updateCourse(courseId: number): void {
+    const teacherId = this.authService.getUserId();
+
+    if (!teacherId) {
+      this.errorMessage = 'לא ניתן לעדכן קורס ללא זיהוי מורה.';
+      return;
+    }
+
+    const updates = {
+      title: this.courseForm.value.title,
+      description: this.courseForm.value.description,
+      teacherId: teacherId
+    };
+
+    this.coursesService.updateCourse(courseId, updates).subscribe({
+      next: (updatedCourse) => {
         if (this.selectedCourse && this.selectedCourse.id === courseId) {
           this.selectedCourse = updatedCourse;
         }
-        this.coursesService.getCourses().subscribe(courses => this.courses = courses);
+        this.loadCourses();
         this.courseForm.reset();
+        this.courses.find(c => c.id === courseId)!.isEditFormOpen = false;
+        this.errorMessage = '';
       },
-      (error) => {
+      error: (error) => {
         console.error('Error updating course:', error);
-        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
+        this.errorMessage = 'אירעה שגיאה בעדכון הקורס. אנא נסה שנית מאוחר יותר.';
       }
-    );
+    });
   }
 
-  deleteCourse(courseId: number) {
-    this.coursesService.deleteCourse(courseId).subscribe(
-      () => {
-        this.ngOnInit();
+  deleteCourse(courseId: number): void {
+    this.coursesService.deleteCourse(courseId).subscribe({
+      next: () => {
+        this.loadCourses();
       },
-      (error) => {
+      error: (error) => {
         console.error('Error deleting course:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
-  showCourseDetails(courseId: number) {
-    this.coursesService.getCourseDetails(courseId).subscribe(
-      (course) => {
+  showCourseDetails(courseId: number): void {
+    this.coursesService.getCourseDetails(courseId).subscribe({
+      next: (course) => {
         this.selectedCourse = course;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching course details:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
 
-    this.coursesService.getLessons(courseId).subscribe(
-      (lessons) => {
-        this.lessons = lessons;
+    this.coursesService.getLessons(courseId).subscribe({
+      next: (lessons) => {
+        this.lessons = lessons.map(lesson => ({ ...lesson, isEditFormOpen: false }));
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching lessons:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
-  addLesson(courseId: number) {
-    this.coursesService.addLesson(courseId, this.lessonForm.value).subscribe(
-      () => {
+  addLesson(courseId: number): void {
+    this.coursesService.addLesson(courseId, this.lessonForm.value).subscribe({
+      next: () => {
         this.showCourseDetails(courseId);
         this.lessonForm.reset();
       },
-      (error) => {
+      error: (error) => {
         console.error('Error adding lesson:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
-  updateLesson(courseId: number, lessonId: number) {
-    this.coursesService.updateLesson(courseId, lessonId, this.lessonForm.value).subscribe(
-      () => {
+  updateLesson(courseId: number, lessonId: number): void {
+    const updates = {
+      title: this.lessonForm.value.title,
+      content: this.lessonForm.value.content,
+      courseId: courseId // הוספת courseId ל-updates
+    };
+  
+    this.coursesService.updateLesson(courseId, lessonId, updates).subscribe({
+      next: () => {
         this.showCourseDetails(courseId);
         this.lessonForm.reset();
+        this.errorMessage = '';
       },
-      (error) => {
+      error: (error) => {
         console.error('Error updating lesson:', error);
-        this.errorMessage = error.error.message || 'An error occurred. Please try again.';
+        this.errorMessage = 'אירעה שגיאה בעדכון השיעור. אנא נסה שנית מאוחר יותר.';
       }
-    );
+    });
   }
 
-  deleteLesson(courseId: number, lessonId: number) {
-    this.coursesService.deleteLesson(courseId, lessonId).subscribe(
-      () => {
+  deleteLesson(courseId: number, lessonId: number): void {
+    this.coursesService.deleteLesson(courseId, lessonId).subscribe({
+      next: () => {
         this.showCourseDetails(courseId);
       },
-      (error) => {
+      error: (error) => {
         console.error('Error deleting lesson:', error);
         this.errorMessage = error.error.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
-  toggleEditForm(course: any) {
+  toggleEditForm(course: any): void {
+    this.courseForm.reset();
     course.isEditFormOpen = !course.isEditFormOpen;
-    this.courseForm.patchValue(course);
+    if (course.isEditFormOpen) {
+      this.courseForm.patchValue(course);
+    }
   }
 
-  toggleCourseDetails(course: any) {
+  toggleLessonEditForm(lesson: any): void {
+    lesson.isEditFormOpen = !lesson.isEditFormOpen;
+    this.lessonForm.patchValue(lesson);
+  }
+
+  toggleCourseDetails(course: any): void {
     course.isDetailsOpen = !course.isDetailsOpen;
     if (course.isDetailsOpen) {
       this.showCourseDetails(course.id);
     }
   }
 
-  openAll() {
+  toggleLessonsAccordion(course: any): void {
+    course.isLessonsAccordionOpen = !course.isLessonsAccordionOpen;
+  }
+
+  openAll(): void {
     this.accordion.openAll();
   }
 
-  closeAll() {
+  closeAll(): void {
     this.accordion.closeAll();
+  }
+
+  toggleAddCourseForm(): void {
+    this.isAddCourseFormOpen = !this.isAddCourseFormOpen;
+    this.courseForm.reset();
   }
 }

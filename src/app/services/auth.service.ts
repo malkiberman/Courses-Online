@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -10,25 +11,49 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials);
-  }
-
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('userId'); // הוספת מחיקת userId
   }
 
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  getRole(): string | null {
-    return localStorage.getItem('role');
+  login(credentials: any): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(user => this.saveUser(user)) // שימוש ב-tap לשמירת המשתמש
+    );
+  }
+
+
+  saveUser(user: User): void {
+    localStorage.setItem('token', user.token);
+    localStorage.setItem('userId', String(user.userId));
+    localStorage.setItem('role', user.role);
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getUserId(): number | null {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      const parsedUserId = parseInt(userId, 10);
+      if (!isNaN(parsedUserId)) {
+        return parsedUserId;
+      } else {
+        console.error('Invalid userId in LocalStorage:', userId);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem('role');
   }
 
   register(name: string, email: string, password: string, role: string): Observable<any> {
