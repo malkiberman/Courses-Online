@@ -1,48 +1,195 @@
-.courses-container {
-    padding: 20px;
+.my-courses-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa, #f2c8b2);
+  padding: 20px;
+}
+
+.my-courses-title {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: linear-gradient(135deg, #04e2ff, #e9844e);
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.courses-accordion {
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+  border-radius: 15px;
+
+}
+
+.course-panel {
+  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  background: linear-gradient(135deg, #63f7a1, #f7794f);
+
+}
+
+.course-header {
+  background: linear-gradient(135deg, #63f7a1, #f7794f);
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  color: white;
+}
+
+.course-title {
+  font-weight: bold;
+  font-size: 1.5em;
+  flex-grow: 1;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.course-description {
+  color: #e0f7fa;
+  margin-left: 15px;
+  font-style: italic;
+}
+
+.course-content {
+  padding: 30px;
+}
+
+.course-details {
+  margin-bottom: 30px;
+}
+
+.course-description-text {
+  margin-bottom: 20px;
+  white-space: pre-line;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.lessons-title {
+  margin-bottom: 20px;
+  color: #05ad05;
+  font-size: 1.8em;
+  text-align: center;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.lessons-list {
+  background-color: #a275759b;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 500px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.lesson-item {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  background-color: #f64d4d;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.lesson-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  background-color: #d84d4da3;
+}
+
+.lesson-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lesson-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #08c52e;
+  text-align: center;
+}
+
+.lesson-content {
+  color: #30c117;
+  text-align: center;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.leave-button {
+  background: linear-gradient(135deg, #ff8a80, #ff5252);
+  color: white;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  display: block;
+  margin: 20px auto 0;
+}
+
+.leave-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+}
+
+.no-lessons, .no-courses {
+  text-align: center;
+  color: #888;
+  padding: 30px;
+  font-size: 1.2em;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(2);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+  
+  
+  .join-button {
+    background: linear-gradient(135deg, #4CAF50, #43A047); /* רקע ירוק */
+    color: white;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    display: block;
+    margin: 20px auto 0;
   }
   
-  .courses-container h1 {
-    margin-bottom: 20px;
-  }
-  
-  mat-expansion-panel {
-    margin-bottom: 10px;
-  }
-  
-  mat-expansion-panel-header {
-    background-color: #f0f0f0;
-  }
-  
-  mat-expansion-panel-header:hover {
-    background-color: #e0e0e0;
-  }
-  
-  mat-expansion-panel-header mat-panel-title {
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  
-  mat-expansion-panel-header mat-panel-description {
-    font-size: 0.9em;
-    color: #555;
-  }
-  
-  mat-card-content {
-    padding: 16px;
-  }
-  
-  mat-card-content h3 {
-    margin-top: 0;
-  }
-  
-  mat-list {
-    margin-bottom: 10px;
-  }
-  
-  mat-list-item {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 5px;
+  .join-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
   }

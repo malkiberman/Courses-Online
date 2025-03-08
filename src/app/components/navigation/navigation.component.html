@@ -1,9 +1,15 @@
-<nav>
-  <a routerLink="/home" routerLinkActive="active">דף הבית</a>
-  <a *ngIf="authService.isAuthenticated()" routerLink="/courses" routerLinkActive="active">קורסים</a>
-  <a *ngIf="authService.isAuthenticated()" routerLink="/my-courses" routerLinkActive="active">הקורסים שלי</a>
-  <a *ngIf="authService.isAuthenticated() && (authService.getRole() === 'admin' || authService.getRole() === 'teacher')" routerLink="/manage-courses" routerLinkActive="active">ניהול קורסים</a>
-  <button *ngIf="authService.isAuthenticated()" (click)="authService.logout()">התנתק</button>
-  <a *ngIf="!authService.isAuthenticated()" routerLink="/login" routerLinkActive="active">התחבר</a>
-  <a *ngIf="!authService.isAuthenticated()" routerLink="/register" routerLinkActive="active">הרשם</a>
-</nav>
+<mat-toolbar color="primary" class="navigation-toolbar">
+  <span class="app-title">CoursesOnline</span>
+  <span class="spacer"></span>
+  <div *ngIf="authService.isAuthenticated()" class="nav-buttons">
+    <button mat-button routerLink="/home" routerLinkActive="active" class="nav-button">דף הבית</button>
+    <button mat-button routerLink="/courses" routerLinkActive="active" class="nav-button">קורסים</button>
+    <button mat-button routerLink="/my-courses" routerLinkActive="active" class="nav-button">הקורסים שלי</button>
+    <button *ngIf="authService.getRole() === 'admin' || authService.getRole() === 'teacher'" mat-button routerLink="/manage-courses" routerLinkActive="active" class="nav-button">ניהול קורסים</button>
+    <button mat-raised-button color="accent" (click)="authService.logout()" class="logout-button">התנתק</button>
+  </div>
+  <div *ngIf="!authService.isAuthenticated()" class="auth-buttons">
+    <button mat-button routerLink="/login" routerLinkActive="active" class="nav-button">התחבר</button>
+    <button mat-raised-button color="accent" routerLink="/register" routerLinkActive="active" class="register-button">הרשם</button>
+  </div>
+</mat-toolbar>

@@ -36,7 +36,7 @@ export class ManageCoursesComponent implements OnInit {
   lessons: any[] = [];
   errorMessage: string = '';
   isAddCourseFormOpen: boolean = false;
-
+  addLessonFormOpen: boolean = false;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
 
   constructor(
@@ -86,6 +86,7 @@ export class ManageCoursesComponent implements OnInit {
       }
     });
   }
+
 
   addCourse(): void {
     this.coursesService.addCourse(this.courseForm.value).subscribe({
@@ -250,5 +251,9 @@ export class ManageCoursesComponent implements OnInit {
   toggleAddCourseForm(): void {
     this.isAddCourseFormOpen = !this.isAddCourseFormOpen;
     this.courseForm.reset();
+  }
+  toggleLessonAddForm(): void {
+    this.addLessonFormOpen = !this.addLessonFormOpen;
+    this.lessonForm.reset();
   }
 }

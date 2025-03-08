@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CoursesService } from '../../services/coursesdata.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -29,25 +29,29 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './my-courses.component.css',
 })
 export class MyCoursesComponent implements OnInit {
-  courses: any[] = [];
+  @Input() courses: any[] = [];
+  @Output() courseLeft = new EventEmitter<number>();
+
   selectedCourse: any = null;
   lessons: any[] = [];
 
   constructor(private coursesService: CoursesService, private authService: AuthService) {}
 
   ngOnInit(): void {
-    const userId = this.authService.getUserId();
-    if (userId) {
-      this.coursesService.getStudentCourses(userId).subscribe(
-        (courses) => {
-          this.courses = courses.map((course) => ({ ...course, isDetailsOpen: false }));
-        },
-        (error) => {
-          console.error('Error fetching my courses:', error);
-        }
-      );
-    } else {
-      console.error('User not authenticated.');
+    if (!this.courses || this.courses.length === 0) {
+      const userId = this.authService.getUserId();
+      if (userId) {
+        this.coursesService.getStudentCourses(userId).subscribe(
+          (courses) => {
+            this.courses = courses.map((course) => ({ ...course, isDetailsOpen: false }));
+          },
+          (error) => {
+            console.error('Error fetching my courses:', error);
+          }
+        );
+      } else {
+        console.error('User not authenticated.');
+      }
     }
   }
 
@@ -77,6 +81,7 @@ export class MyCoursesComponent implements OnInit {
       this.coursesService.leaveCourse(courseId, userId).subscribe(
         (response) => {
           console.log('Left course successfully:', response);
+          this.courseLeft.emit(courseId);
           this.ngOnInit();
         },
         (error) => {

@@ -1,36 +1,44 @@
 <div class="my-courses-container">
-  <h1>הקורסים שלי</h1>
-  <mat-accordion>
+  <h1 class="my-courses-title">הקורסים שלי</h1>
+
+  <mat-accordion class="courses-accordion">
     @for (course of courses; track course.id) {
-    <mat-expansion-panel (opened)="showCourseDetails(course.id)" (closed)="course.isDetailsOpen = false">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ course.title }}
-        </mat-panel-title>
-        <mat-panel-description>
-          לחץ כאן כדי {{ course.isDetailsOpen ? 'לסגור פרטים' : 'לראות פרטים' }}
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <mat-card-content>
-        @if (selectedCourse && selectedCourse.id === course.id) {
-        <p>{{ selectedCourse.description }}</p>
-        <h3>שיעורים</h3>
-        <mat-list>
-          @for (lesson of lessons; track lesson.id) {
-          <mat-list-item>
-            <h4>{{ lesson.title }}</h4>
-            <p>{{ lesson.content }}</p>
-          </mat-list-item>
-          } @empty {
-          <p>אין שיעורים בקורס זה.</p>
+      <mat-expansion-panel class="course-panel" (opened)="showCourseDetails(course.id)" (closed)="course.isDetailsOpen = false">
+        <mat-expansion-panel-header class="course-header">
+          <mat-panel-title class="course-title">
+            {{ course.title }}
+          </mat-panel-title>
+          <mat-panel-description class="course-description"> </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <mat-card-content class="course-content">
+          @if (selectedCourse && selectedCourse.id === course.id) {
+            <div class="course-details">
+              <p class="course-description-text">{{ selectedCourse.description }}</p>
+
+              <h3 class="lessons-title">שיעורים</h3>
+              <mat-list class="lessons-list">
+                @for (lesson of lessons; track lesson.id) {
+                  <mat-list-item class="lesson-item">
+                    <div class="lesson-content-wrapper">
+                      <h4 class="lesson-title" matListItemTitle><mat-icon>book</mat-icon> {{ lesson.title }}</h4>
+                      <p class="lesson-content" matListItemLine>{{ lesson.content }}</p>
+                    </div>
+                  </mat-list-item>
+                } @empty {
+                  <p class="no-lessons">אין שיעורים בקורס זה.</p>
+                }
+              </mat-list>
+            </div>
           }
-        </mat-list>
-        }
-        <button mat-button (click)="leaveCourse(course.id)">עזוב קורס</button>
-      </mat-card-content>
-    </mat-expansion-panel>
+
+          <button mat-raised-button color="warn" class="leave-button" (click)="leaveCourse(course.id)">
+            <mat-icon>exit_to_app</mat-icon> עזוב קורס
+          </button>
+        </mat-card-content>
+      </mat-expansion-panel>
     } @empty {
-    <p>אין קורסים זמינים כרגע.</p>
+      <p class="no-courses">אין קורסים זמינים כרגע.</p>
     }
   </mat-accordion>
 </div>

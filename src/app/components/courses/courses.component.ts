@@ -7,11 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-
+import { TruncatePipe } from '../../pipes/truncate.pipe'; 
+import { HighlightDirective } from '../../directives/highlight.directive'; // החלף בנתיב הנכון לדירקטיבה שלך
 @Component({
   selector: 'app-courses',
   standalone: true,
-  imports: [MatExpansionModule, MatListModule, MatButtonModule, CommonModule, MatIconModule, MatCardModule],
+  imports: [HighlightDirective,TruncatePipe,MatExpansionModule,MatListModule, MatButtonModule, CommonModule, MatIconModule, MatCardModule],
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.css'
 })
